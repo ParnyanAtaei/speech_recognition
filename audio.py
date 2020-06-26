@@ -1,5 +1,11 @@
 import pyaudio
 import wave
+import speech_recognition as sr
+import subprocess
+
+def say(text):
+    subprocess.call('echo ' + text + ' | cscript "C:\Program Files\Jampal\ptts.vbs"', shell=True)
+    #subprocess.call(text, shell=True)
 
 def play_audio(filename):
     chunk = 1024
@@ -23,4 +29,30 @@ def play_audio(filename):
     pa.terminate()
 
 
-play_audio("./notification_sound/PinkPanther30.wav")
+r = sr.Recognizer()
+
+
+def initSpeech():
+    print("Listening...")
+
+    play_audio("./notification_sound/Alesis-Fusion-Nylon-String-Guitar-C4.wav")
+
+    with sr.Microphone() as source:
+       # r.adjust_for_ambient_noise(source, duration=1)
+        print("Say Something")
+        audio = r.listen(source)
+    play_audio("./notification_sound/Alesis-Fusion-Nylon-String-Guitar-C4.wav")
+
+    command = ""
+
+    try:
+        command = r.recognize_google(audio)
+    except:
+        print("Couldn't understand you")
+
+    print("Your command:")
+    print(command)
+    say(command)
+
+
+initSpeech()
